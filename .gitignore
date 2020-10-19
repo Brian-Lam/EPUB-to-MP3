@@ -4,3 +4,4 @@ test_data/
 epub_test_output.txt
 *.mp3
 __pycache__/
+.vscode/
