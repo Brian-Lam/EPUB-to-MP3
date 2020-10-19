@@ -7,6 +7,11 @@ convert.py pipeline, without actually running the entire
 pipeline again.
 
 $ python3 mp3_concatenator.py
+
+TODO(Brian-Lam): Replace all concat code with a OS System
+call to use ffmpeg
+e.g.
+ffmpeg -i "concat:file1.mp3|file2.mp3" -acodec copy output.mp3
 """
 
 from pydub import AudioSegment
