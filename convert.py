@@ -21,8 +21,14 @@ from pydub import AudioSegment
 """
 Basic command line flags
 """
-parser = argparse.ArgumentParser(description='Parse an epub file and convert it into an MP3 audiobook.')
-parser.add_argument("file", nargs="?", default="test_data/test.epub", help="The filepath of the .epub file to convert")
+parser = argparse.ArgumentParser(
+    description='Parse an epub file and convert it into an MP3 audiobook.'
+)
+parser.add_argument("--file", 
+    nargs="?", 
+    default="", 
+    help="The filepath of the .epub file to convert"
+)
 args = parser.parse_args()
 
 # The filepath of the eBook to convert.
