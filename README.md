@@ -34,7 +34,7 @@ You'll get a JSON file with your Google Cloud Platform credentials. Set it in en
 
 For example:
 ```sh
-$ export GOOGLE_APPLICATION_CREDENTIALS=~/dev/EPUB-To-MP3/GCP-credentials.json
+$ export GOOGLE_APPLICATION_CREDENTIALS=~/dev/EPUB-to-MP3/GCP-credentials.json
 ```
 
 ## Usage
