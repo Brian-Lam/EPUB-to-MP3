@@ -1,0 +1,6 @@
+GCP-credentials.json
+venv/
+test_data/
+epub_test_output.txt
+*.mp3
+__pycache__/
