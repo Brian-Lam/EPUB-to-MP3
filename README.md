@@ -39,5 +39,5 @@ $ export GOOGLE_APPLICATION_CREDENTIALS=~/dev/EPUB-to-MP3/GCP-credentials.json
 
 ## Usage
 ```sh
-$ python3 convert.py 
+$ python3 convert.py --file="book.epub"
 ```

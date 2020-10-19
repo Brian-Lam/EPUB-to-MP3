@@ -6,9 +6,7 @@ to convert a book (in epub format) into an MP3 audiobook.
 
 Usage:
 $ export GOOGLE_APPLICATION_CREDENTIALS=~/EPUB-To-MP3/GCP-credentials.json
-$ python3 convert.py
-
-Set EPUB_FILEPATH to specify the epub file that should be converted.
+$ python3 convert.py --file="book.epub"
 """
 
 import argparse
