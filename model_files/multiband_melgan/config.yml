@@ -1,0 +1,122 @@
+allow_cache: true
+batch_max_steps: 8192
+batch_max_steps_valid: 81920
+batch_size: 64
+config: examples/multiband_melgan/conf/multiband_melgan.v1.yaml
+dev_dir: ./dump/valid
+discriminator_mixed_precision: false
+discriminator_optimizer_params:
+  amsgrad: false
+  lr_fn: PiecewiseConstantDecay
+  lr_params:
+    boundaries:
+    - 100000
+    - 200000
+    - 300000
+    - 400000
+    - 500000
+    values:
+    - 0.00025
+    - 0.000125
+    - 6.25e-05
+    - 3.125e-05
+    - 1.5625e-05
+    - 1.0e-06
+discriminator_params:
+  downsample_pooling: AveragePooling1D
+  downsample_pooling_params:
+    pool_size: 4
+    strides: 2
+  downsample_scales:
+  - 4
+  - 4
+  - 4
+  filters: 16
+  is_weight_norm: false
+  kernel_sizes:
+  - 5
+  - 3
+  max_downsample_filters: 512
+  nonlinear_activation: LeakyReLU
+  nonlinear_activation_params:
+    alpha: 0.2
+  out_channels: 1
+  scales: 3
+discriminator_train_start_steps: 200000
+eval_interval_steps: 5000
+format: npy
+generator_mixed_precision: false
+generator_optimizer_params:
+  amsgrad: false
+  lr_fn: PiecewiseConstantDecay
+  lr_params:
+    boundaries:
+    - 100000
+    - 200000
+    - 300000
+    - 400000
+    - 500000
+    - 600000
+    - 700000
+    values:
+    - 0.001
+    - 0.0005
+    - 0.00025
+    - 0.000125
+    - 6.25e-05
+    - 3.125e-05
+    - 1.5625e-05
+    - 1.0e-06
+generator_params:
+  filters: 384
+  is_weight_norm: false
+  kernel_size: 7
+  out_channels: 4
+  stack_kernel_size: 3
+  stacks: 4
+  upsample_scales:
+  - 8
+  - 4
+  - 2
+hop_size: 256
+is_shuffle: true
+lambda_adv: 2.5
+lambda_feat_match: 10.0
+log_interval_steps: 200
+num_save_intermediate_results: 1
+outdir: ./examples/multiband_melgan/exp/train.multiband_melgan.v1/
+remove_short_samples: true
+resume: ./examples/multiband_melgan/exp/train.multiband_melgan.v1/checkpoints/ckpt-500000
+sampling_rate: 22050
+save_interval_steps: 20000
+stft_loss_params:
+  fft_lengths:
+  - 1024
+  - 2048
+  - 512
+  frame_lengths:
+  - 600
+  - 1200
+  - 240
+  frame_steps:
+  - 120
+  - 240
+  - 50
+subband_stft_loss_params:
+  fft_lengths:
+  - 384
+  - 683
+  - 171
+  frame_lengths:
+  - 150
+  - 300
+  - 60
+  frame_steps:
+  - 30
+  - 60
+  - 10
+train_dir: ./dump/train
+train_max_steps: 4000000
+use_norm: true
+verbose: 1
+version: 0.6.1

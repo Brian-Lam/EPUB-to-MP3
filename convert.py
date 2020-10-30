@@ -15,8 +15,10 @@ import convert_utils
 import os
 import time 
 from ebooklib import epub
-from google.cloud import texttospeech
 from pydub import AudioSegment
+from tqdm import tqdm
+import tts_utils
+
 
 """
 Basic command line flags
@@ -29,10 +31,17 @@ parser.add_argument("--file",
     default="", 
     help="The filepath of the .epub file to convert"
 )
+parser.add_argument("--offline", 
+    action='store_true',
+    help="Whether to use the offline model for parsing. If this flag is passed, offline model is used"
+)
 args = parser.parse_args()
 
 # The filepath of the eBook to convert.
 EPUB_FILEPATH = args.file
+ENABLE_OFFLINE = args.offline
+if not ENABLE_OFFLINE:
+    from google.cloud import texttospeech
 
 """
 Development and Advanced Usage Flags 
@@ -197,12 +206,17 @@ def delete_chunk_mp3s(chunk_mp3_filepaths):
 Converts eBook text chunks into MP3 files and returns the filepath
 for each MP3 file.
 """
-def convert_text_chunks_to_speech(ebook_chunks):
+def convert_text_chunks_to_speech(ebook_chunks, offline=False):
     chunks_converted = 0
     chunk_mp3_filepaths = []
     for chunk in ebook_chunks:
         if (chunks_converted < MAX_CHUNK_COUNT):
-            chunk_mp3_filepath = GenerateAudioContentForText(chunk)
+            chunk_mp3_filepath = None
+            if not offline:
+                chunk_mp3_filepath = GenerateAudioContentForText(chunk)
+            else:
+                chunk_mp3_filepath = GenerateAudioContentForText(chunk)
+                # TODO @allen-n: add offline generation
             chunk_mp3_filepaths.append(chunk_mp3_filepath)
         
         chunks_converted += 1
@@ -214,10 +228,11 @@ def convert_text_chunks_to_speech(ebook_chunks):
 Run the program.
 """
 if __name__ == '__main__':
-    ebook_text = epub_to_text()
-    ebook_chunks = full_text_to_chunks(ebook_text)
+    tts_utils.run_example()
+    # ebook_text = epub_to_text()
+    # ebook_chunks = full_text_to_chunks(ebook_text)
 
-    if not DRY_RUN_MODE:
-        chunk_mp3_filepaths = convert_text_chunks_to_speech(ebook_chunks)
-        merge_chunk_mp3s(chunk_mp3_filepaths)
-        delete_chunk_mp3s(chunk_mp3_filepaths)
+    # if not DRY_RUN_MODE:
+    #     chunk_mp3_filepaths = convert_text_chunks_to_speech(ebook_chunks)
+    #     merge_chunk_mp3s(chunk_mp3_filepaths)
+    #     delete_chunk_mp3s(chunk_mp3_filepaths)

@@ -1,0 +1,66 @@
+allow_cache: true
+batch_max_steps: 8192
+batch_max_steps_valid: 81920
+batch_size: 16
+config: ./egs/ljspeech/conf/melgan.v1.yaml
+dev_dir: ./egs/ljspeech/dump/valid
+discriminator_mixed_precision: false
+discriminator_optimizer_params:
+  beta_1: 0.5
+  beta_2: 0.9
+  lr: 0.0001
+discriminator_params:
+  downsample_pooling: AveragePooling1D
+  downsample_pooling_params:
+    pool_size: 4
+    strides: 2
+  downsample_scales:
+  - 4
+  - 4
+  - 4
+  - 4
+  filters: 16
+  is_weight_norm: false
+  kernel_sizes:
+  - 5
+  - 3
+  max_downsample_filters: 1024
+  nonlinear_activation: LeakyReLU
+  nonlinear_activation_params:
+    alpha: 0.2
+  out_channels: 1
+  scales: 3
+eval_interval_steps: 500
+format: npy
+generator_mixed_precision: false
+generator_optimizer_params:
+  beta_1: 0.5
+  beta_2: 0.9
+  lr: 0.0001
+generator_params:
+  filters: 512
+  is_weight_norm: false
+  kernel_size: 7
+  out_channels: 1
+  stack_kernel_size: 3
+  stacks: 3
+  upsample_scales:
+  - 8
+  - 8
+  - 2
+  - 2
+hop_size: 256
+is_shuffle: true
+lambda_feat_match: 10.0
+log_interval_steps: 200
+num_save_intermediate_results: 1
+outdir: ./egs/ljspeech/exp/melgan.v1/
+remove_short_samples: true
+resume: ''
+sampling_rate: 22050
+save_interval_steps: 10000
+train_dir: ./egs/ljspeech/dump/train
+train_max_steps: 4000000
+use_norm: true
+verbose: 1
+version: 0.3.4

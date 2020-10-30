@@ -5,3 +5,7 @@ epub_test_output.txt
 *.mp3
 __pycache__/
 .vscode/
+# Ignore model files
+*.h5
+*.tflite
+*.wav

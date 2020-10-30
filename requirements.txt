@@ -1,0 +1,12 @@
+EbookLib 
+bs4 
+xml-cleaner 
+pydub
+tensorflow
+tensorflow-gpu
+numpy
+soundfile
+TensorFlowTTS
+tqdm
+dataclasses
+cProfile
