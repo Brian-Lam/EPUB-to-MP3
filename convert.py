@@ -17,7 +17,7 @@ import time
 from ebooklib import epub
 from pydub import AudioSegment
 from tqdm import tqdm
-import tts_utils
+from tts_utils import TTS
 
 
 """
@@ -228,7 +228,12 @@ def convert_text_chunks_to_speech(ebook_chunks, offline=False):
 Run the program.
 """
 if __name__ == '__main__':
-    tts_utils.run_example()
+    tts = TTS()
+    arr = ["Hi everyone, thank you all for being here with us this evening.", "I just wanted to say a few words about my grandfather. Most of you here knew him as Ata-Khan,",
+           "but to a few of us in this room, he will always be Babai. When we were kids", "every so often Babai would come to pick us up from school."]
+    for i, item in enumerate(tqdm(arr)):
+        tts.run_inference(item, "audio/Testfile{}".format(i))
+
     # ebook_text = epub_to_text()
     # ebook_chunks = full_text_to_chunks(ebook_text)
 
