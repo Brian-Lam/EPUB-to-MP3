@@ -11,12 +11,18 @@ Developed with Python 3 on Ubuntu 18.04, and uses Google Cloud Speech-to-Text AP
 because an audiobook will need to be separated into chunks, sent over to the Google
 Cloud Platfrom Text-to-Speech API, and the individual chunk's MP3s will be concatenated.
 
-`espeak` is used by the Mozilla speech synthesis model to generate speech
-
 ```sh
+$ sudo apt update
 $ sudo apt install ffmpeg 
-$ sudo apt install espeak
 ```
+
+#### GPU Support for offline TTS
+Highly reccomended if you plan to do the speech synthesis on your local machine, as this is _quite_ slow without GPU acceleration.
+
+For offline models, if you have a GPU and are on WSL, [follow these instructions](https://docs.nvidia.com/cuda/wsl-user-guide/index.html)
+
+If you are on on plain old linux, [follow these instructions](https://medium.com/@exesse/cuda-10-1-installation-on-ubuntu-18-04-lts-d04f89287130)
+
 
 #### Python
 ## Online TTS

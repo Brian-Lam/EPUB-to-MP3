@@ -17,7 +17,6 @@ import time
 from ebooklib import epub
 from pydub import AudioSegment
 from tqdm import tqdm
-from tts_utils import TTS
 
 
 """
@@ -42,6 +41,9 @@ EPUB_FILEPATH = args.file
 ENABLE_OFFLINE = args.offline
 if not ENABLE_OFFLINE:
     from google.cloud import texttospeech
+else:
+    from tts_utils import TTS
+    import re
 
 """
 Development and Advanced Usage Flags 
@@ -113,6 +115,32 @@ def GenerateAudioContentForText(text):
             break
     
 
+def eupub_to_chapters():
+    path = os.path.abspath(EPUB_FILEPATH)
+    print(path)
+    book = epub.read_epub(path)
+
+    full_text = ''
+    for text in book.get_items_of_type(ebooklib.ITEM_DOCUMENT):
+        html_content = text.get_content().decode("utf-8")
+        full_text += html_content
+        
+    chapter_text = convert_utils.get_all_chapters(full_text)
+        # navs.append(html_content)
+        # text_content = convert_utils.chapter_to_text(html_content)
+        # # epub_content_list += text_content
+        # epub_chapter_list.append(text_content) 
+    print("{} Chapters found".format(len(chapter_text))) # FIXME
+    # print(chapter_text[0])
+
+    # For debugging only: Write the text contents to file
+    # if OUTPUT_EPUB_TEXT_TO_TEST_FILE:
+    f = open("chapter_test.txt", "w")
+    for i, chapter in enumerate(chapter_text):
+        f.write("!!Chapter {}:\n{}".format(i+1,chapter))
+    f.close()
+
+    return chapter_text
 
 """
 Parses an epub file and returns the text contained within it,
@@ -180,6 +208,21 @@ def full_text_to_chunks(full_text):
     return chunks
 
 """
+Breaks down a book into chunks of ~MAX_CHUNK_LENGTH characters each, not
+including spaces.
+@param: chapters: array of strings corresponding to chapter text [str]
+@param num_sentences: the number of sentences to add to each chunk
+"""
+def chapters_to_chunks(chapters, num_sentences=4):
+    chunks = []
+    pat = re.compile(r'([^\.!?]*[\.!?])', re.M) # match sentences
+    for chapter in chapters:
+        sentences = pat.findall(chapter)
+        chunks.append(sentences) 
+    
+    return chunks
+
+"""
 Concatenate the MP3 files, specified as a list of filepath strings
 in `chunk_mp3_filepaths`, and saves the combined MP3.
 """
@@ -206,17 +249,13 @@ def delete_chunk_mp3s(chunk_mp3_filepaths):
 Converts eBook text chunks into MP3 files and returns the filepath
 for each MP3 file.
 """
-def convert_text_chunks_to_speech(ebook_chunks, offline=False):
+def convert_text_chunks_to_speech(ebook_chunks):
     chunks_converted = 0
     chunk_mp3_filepaths = []
     for chunk in ebook_chunks:
         if (chunks_converted < MAX_CHUNK_COUNT):
             chunk_mp3_filepath = None
-            if not offline:
-                chunk_mp3_filepath = GenerateAudioContentForText(chunk)
-            else:
-                chunk_mp3_filepath = GenerateAudioContentForText(chunk)
-                # TODO @allen-n: add offline generation
+            chunk_mp3_filepath = GenerateAudioContentForText(chunk)
             chunk_mp3_filepaths.append(chunk_mp3_filepath)
         
         chunks_converted += 1
@@ -224,20 +263,66 @@ def convert_text_chunks_to_speech(ebook_chunks, offline=False):
     print("All chunks converted.")
     return chunk_mp3_filepaths
 
+def merge_wavs_to_mp3(out_filename, path=".", ms_delay=100):
+    combined_mp3 = AudioSegment.empty()
+    path = os.path.abspath(path)
+    print("Joining audio for {}".format(out_filename))
+    for filename in tqdm(sorted(os.listdir(path))):
+        # print("filename: {}, abs: {}, path: {}".format(filename, os.path.abspath(filename), path))
+        if os.path.splitext(filename)[1] == ".wav":
+            # try:
+            combined_mp3 += AudioSegment.from_wav(os.path.join(path, filename))
+            combined_mp3 += AudioSegment.silent(duration=ms_delay)
+            # except Exception as e:
+            #     print("Exception {}, the file was: {}".format(e, filename))
+    out = os.path.abspath(os.path.join(path, out_filename))
+    combined_mp3.export(out, format="mp3")
+    # Clean up
+    for filename in os.listdir(path):
+        if os.path.splitext(filename)[1] == ".wav":
+            os.remove(os.path.join(path, filename))
+
+def offline_text_chunks_to_speech(ebook_chunks):
+    chunk_mp3_filepaths = []
+    tts = TTS()
+    if 'audio' not in os.listdir('.'):
+        os.mkdir('audio')
+    path = os.path.abspath('./audio')
+    
+    for i, chapter in enumerate(ebook_chunks):
+        # s = "Chapter_{}_audio".format(i)
+        # os.mkdir(s)
+        # tmp_path = os.path.join(path, s)
+        print("Generating speech for chapter {}".format(i))
+        for j, sentence in enumerate(tqdm(chapter)):
+            p = os.path.join(path, "chapter_{}_audio_{}".format(i,j))
+            tts.run_inference(sentence, p)
+        merge_wavs_to_mp3("Chapter{}.mp3".format(i), path, CHUNK_MILLISECOND_DELAY)
+
+    print("All chunks converted.")
+    return chunk_mp3_filepaths
+
 """ 
 Run the program.
 """
 if __name__ == '__main__':
-    tts = TTS()
-    arr = ["Hi everyone, thank you all for being here with us this evening.", "I just wanted to say a few words about my grandfather. Most of you here knew him as Ata-Khan,",
-           "but to a few of us in this room, he will always be Babai. When we were kids", "every so often Babai would come to pick us up from school."]
-    for i, item in enumerate(tqdm(arr)):
-        tts.run_inference(item, "audio/Testfile{}".format(i))
+    # tts = TTS()
+    # arr = ["Hi everyone, thank you all for being here with us this evening.", "I just wanted to say a few words about my grandfather. Most of you here knew him as Ata-Khan,",
+    #        "but to a few of us in this room, he will always be Babai. When we were kids", "every so often Babai would come to pick us up from school."]
+    # for i, item in enumerate(tqdm(arr)):
+    #     tts.run_inference(item, "audio/Testfile{}".format(i))
 
-    # ebook_text = epub_to_text()
-    # ebook_chunks = full_text_to_chunks(ebook_text)
+    if not ENABLE_OFFLINE:
+        ebook_text = epub_to_text()
+        ebook_chunks = full_text_to_chunks(ebook_text)
 
-    # if not DRY_RUN_MODE:
-    #     chunk_mp3_filepaths = convert_text_chunks_to_speech(ebook_chunks)
-    #     merge_chunk_mp3s(chunk_mp3_filepaths)
-    #     delete_chunk_mp3s(chunk_mp3_filepaths)
+        if not DRY_RUN_MODE:
+            chunk_mp3_filepaths = convert_text_chunks_to_speech(ebook_chunks)
+            merge_chunk_mp3s(chunk_mp3_filepaths)
+            delete_chunk_mp3s(chunk_mp3_filepaths)
+    else:
+        ebook_chapter_text = eupub_to_chapters()
+        ebook_chunks = chapters_to_chunks(ebook_chapter_text)
+        offline_text_chunks_to_speech(ebook_chunks)
+        # for s in ebook_chunks[1]:
+            # print(u">>{}".format(s))
