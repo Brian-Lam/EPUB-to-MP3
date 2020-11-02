@@ -59,6 +59,7 @@ OUT_MELGAN_TFLITE_FILE = 'melgan.tflite'
 OUT_MELGAN_TFLITE_DIR = './model_files/melgan'
 OUT_MB_MELGAN_TFLITE_FILE = 'mb_melgan.tflite'
 OUT_MB_MELGAN_TFLITE_DIR = './model_files/multiband_melgan'
+OUT_MB_MELGAN2_TFLITE_DIR = './model_files/multiband_melgan2'
 LJSPEECH_PROCESSOR_JSON = './processor/pretrained/ljspeech_mapper.json'
 
 #TODO@allen: handle case where tflite models don't exist! And also hard-coded filepaths r bad
@@ -70,6 +71,7 @@ class TTS(object):
             [
                 ("fastspeech2", (self._load_fastspeech2, self._infer_fastspeech2, FASTSPEECH2_TFLITE_PATH)),
                 ("multiband_melgan_generator", (self._load_mb_melgan, OUT_MB_MELGAN_TFLITE_DIR)),
+                ("multiband_melgan2_generator", (self._load_mb_melgan2, OUT_MB_MELGAN2_TFLITE_DIR)),
                 ("melgan_generator", (self._load_melgan, OUT_MELGAN_TFLITE_DIR)),
                 ("tacotron2", (self._load_tacotron, self._infer_tacotron2, TACOTRON_TFLITE_PATH)),
             ]
@@ -127,6 +129,20 @@ class TTS(object):
             config=melgan_config, name='melgan_generator')
         melgan._build()
         weights = os.path.join(path, 'generator-940000.h5')
+        melgan.load_weights(weights)
+        return melgan
+    
+    def _load_mb_melgan2(self, path='./model_files/multiband_melgan2'):
+        # initialize melgan model for vocoding
+        config = os.path.join(path, 'config.yml')
+        with open(config) as f:
+            melgan_config = yaml.load(f, Loader=yaml.Loader)
+        melgan_config = MultiBandMelGANGeneratorConfig(
+            **melgan_config["multiband_melgan_generator_params"])
+        melgan = TFMBMelGANGenerator(
+            config=melgan_config, name='melgan_generator')
+        melgan._build()
+        weights = os.path.join(path, 'libritts_24k.h5')
         melgan.load_weights(weights)
         return melgan
 

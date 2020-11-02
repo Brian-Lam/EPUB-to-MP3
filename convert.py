@@ -125,20 +125,16 @@ def eupub_to_chapters():
         html_content = text.get_content().decode("utf-8")
         full_text += html_content
         
-    chapter_text = convert_utils.get_all_chapters(full_text)
-        # navs.append(html_content)
-        # text_content = convert_utils.chapter_to_text(html_content)
-        # # epub_content_list += text_content
-        # epub_chapter_list.append(text_content) 
-    print("{} Chapters found".format(len(chapter_text))) # FIXME
-    # print(chapter_text[0])
+    chapter_text = convert_utils.get_all_chapters(full_text) 
+    print("{} Chapters found in ebook".format(len(chapter_text))) # FIXME
+
 
     # For debugging only: Write the text contents to file
-    # if OUTPUT_EPUB_TEXT_TO_TEST_FILE:
-    f = open("chapter_test.txt", "w")
-    for i, chapter in enumerate(chapter_text):
-        f.write("!!Chapter {}:\n{}".format(i+1,chapter))
-    f.close()
+    if OUTPUT_EPUB_TEXT_TO_TEST_FILE:
+        f = open("chapter_test.txt", "w")
+        for i, chapter in enumerate(chapter_text):
+            f.write("!!Chapter {}:\n{}".format(i+1,chapter))
+        f.close()
 
     return chapter_text
 
@@ -211,15 +207,19 @@ def full_text_to_chunks(full_text):
 Breaks down a book into chunks of ~MAX_CHUNK_LENGTH characters each, not
 including spaces.
 @param: chapters: array of strings corresponding to chapter text [str]
-@param num_sentences: the number of sentences to add to each chunk
+@param num_senrdr    tences: the number of sentences to add to each chunk
 """
 def chapters_to_chunks(chapters, num_sentences=4):
     chunks = []
-    pat = re.compile(r'([^\.!?]*[\.!?])', re.M) # match sentences
+    pat = re.compile(r'([^\.!?]*[\.!?])', re.M)  # match sentences
     for chapter in chapters:
         sentences = pat.findall(chapter)
-        chunks.append(sentences) 
-    
+        out_sentences = []
+        for i in range(0, len(sentences), num_sentences):
+            out_sentences.append(
+                u"".join(sentences[i: min(len(sentences), i+num_sentences)]))
+        chunks.append(out_sentences)
+
     return chunks
 
 """
@@ -306,11 +306,12 @@ def offline_text_chunks_to_speech(ebook_chunks):
 Run the program.
 """
 if __name__ == '__main__':
-    # tts = TTS()
+    # tts = TTS(tts='fastspeech2', generator='multiband_melgan2_generator')
     # arr = ["Hi everyone, thank you all for being here with us this evening.", "I just wanted to say a few words about my grandfather. Most of you here knew him as Ata-Khan,",
     #        "but to a few of us in this room, he will always be Babai. When we were kids", "every so often Babai would come to pick us up from school."]
-    # for i, item in enumerate(tqdm(arr)):
-    #     tts.run_inference(item, "audio/Testfile{}".format(i))
+    # # for i, item in enumerate(tqdm(arr)):
+    # #     tts.run_inference(item, "audio/Testfile{}".format(i))
+    # tts.run_inference("".join(arr), "audio/testfile")
 
     if not ENABLE_OFFLINE:
         ebook_text = epub_to_text()
