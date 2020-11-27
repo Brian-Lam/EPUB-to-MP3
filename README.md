@@ -28,11 +28,28 @@ after installing the drivers on windows, which is a little unclear from the inst
 
 If not, you may also need to follow the vanilla linux isntructions below to add cuda 10.1 to your PATH.
 
-If you are on on plain old linux, [follow these instructions](https://medium.com/@exesse/cuda-10-1-installation-on-ubuntu-18-04-lts-d04f89287130)
+If you are on on plain old Linux, [follow these instructions](https://medium.com/@exesse/cuda-10-1-installation-on-ubuntu-18-04-lts-d04f89287130)
 
 
-#### Python
-## Online TTS
+-------
+
+## Setup
+### Online TTS
+#### Overview
+Text will be sent to Google Cloud Platform's Text to Speech synthesis service.
+
+#### Google Cloud Platform
+To use online recognition, set up a Google Cloud Platform account, following the instructions here: 
+https://cloud.google.com/text-to-speech/docs/libraries#client-libraries-install-python
+
+You'll get a JSON file with your Google Cloud Platform credentials. Set it in environment variables.
+
+For example:
+```sh
+$ export GOOGLE_APPLICATION_CREDENTIALS=~/dev/EPUB-to-MP3/GCP-credentials.json
+```
+
+#### Install required packages
 Set up virutalenv and install libraries for:
 * Google Cloud Text to Speech API
 * ePub parsing
@@ -42,7 +59,14 @@ $ virtualenv venv
 $ source venv\bin\activate
 $ pip3 install -r requirements_online_tts.txt
 ```
-## Offline TTS
+
+----- 
+
+### Local TTS
+#### Overview
+Text-to-speech synthesis be performed locally. 
+
+#### Instructions
 Set up virutalenv and install libraries for:
 * TensorFlow
 * ePub parsing
@@ -60,17 +84,6 @@ Download [the zip file](https://drive.google.com/file/d/1fcc8Rdl9WemkwFoiLg4p22v
 **Option 2: Download models from source**
 
 Otherwise you can download models to the ```model_files``` folder from their respective [sub-folders in the repo](https://github.com/TensorSpeech/TensorFlowTTS/tree/master/examples). For each The necessary files are the configuration.yaml file and the generator.h5 file
-
-### Google Cloud Platform
-To use online recognition, set up a Google Cloud Platform account, following the instructions here: 
-https://cloud.google.com/text-to-speech/docs/libraries#client-libraries-install-python
-
-You'll get a JSON file with your Google Cloud Platform credentials. Set it in environment variables.
-
-For example:
-```sh
-$ export GOOGLE_APPLICATION_CREDENTIALS=~/dev/EPUB-to-MP3/GCP-credentials.json
-```
 
 ## Usage
 ```sh
