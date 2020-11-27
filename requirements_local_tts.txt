@@ -4,9 +4,8 @@ xml-cleaner
 pydub
 tensorflow
 tensorflow-gpu
-numpy
+numpy==1.16.0
 soundfile
 TensorFlowTTS
 tqdm
 dataclasses
-cProfile
