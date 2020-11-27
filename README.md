@@ -40,7 +40,7 @@ Set up virutalenv and install libraries for:
 ```sh
 $ virtualenv venv
 $ source venv\bin\activate
-$ pip3 install --upgrade google-api-python-client google-cloud-speech google-cloud-texttospeech EbookLib bs4 xml-cleaner pydub
+$ pip3 install -r requirements_online_tts.txt
 ```
 ## Offline TTS
 Set up virutalenv and install libraries for:
@@ -50,7 +50,7 @@ Set up virutalenv and install libraries for:
 ```sh
 $ virtualenv venv
 $ source venv/bin/activate
-$ pip3 install -r requirements.txt
+$ pip3 install -r requirements_local_tts.txt
 ```
 ### Offline model downloads
 **Option 1: Download pre-zipped models**

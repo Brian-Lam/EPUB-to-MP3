@@ -1,0 +1,7 @@
+ google-api-python-client
+ google-cloud-speech
+ google-cloud-texttospeech
+ EbookLib
+ bs4
+ xml-cleaner
+ pydub
