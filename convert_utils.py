@@ -41,6 +41,16 @@ Returns array of chapter text from an epub files full text.
 
 
 def get_all_chapters(full_text):
+    """Parse the full xml encoded text of an epub file and return an array of strings
+    corresponding to the chapters of the epub
+
+    Args:
+        full_text (str): The xml encoded contents of an entire .epub file
+
+    Returns:
+        list(str): A list of string objects, each of which corresponds to 
+        a chapter of the .epub file, i.e. ["chapter 1 text", "chapter 2 text", ...]
+    """    
     soup = BeautifulSoup(full_text, 'html.parser')
     all_text = soup.find_all(text=True)
     visible_texts = filter(tag_visible, all_text)
@@ -58,11 +68,8 @@ def get_all_chapters(full_text):
         if chapter_index < 0:
             continue
         try:
-            chapter_text[chapter_index] += u"{}".format(text) #.extend(t.strip('\n') for t in text) # u"{}".format(text.strip('\n'))
+            chapter_text[chapter_index] += u"{}".format(text)
         except IndexError:
             print("Index was {}, object is of length {}".format(
                 chapter_index, len(chapter_text)))
-
-    # for i, c in enumerate(chapter_text):
-    #     chapter_text[i] = u"".join(c)
     return chapter_text

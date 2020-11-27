@@ -62,7 +62,7 @@ OUT_MB_MELGAN_TFLITE_DIR = './model_files/multiband_melgan'
 OUT_MB_MELGAN2_TFLITE_DIR = './model_files/multiband_melgan2'
 LJSPEECH_PROCESSOR_JSON = './processor/pretrained/ljspeech_mapper.json'
 
-#TODO@allen: handle case where tflite models don't exist! And also hard-coded filepaths r bad
+#TODO@allen: handle case where tflite models don't exist! And also hard-coded filepaths
 class TTS(object):
     """Initializes a TTS and Vocoder model to consume strings and return .wav files."""
 
@@ -216,7 +216,6 @@ class TTS(object):
             model, OUT_MB_MELGAN_TFLITE_FILE, OUT_MB_MELGAN_TFLITE_DIR)
 
     # Prepare input data.
-
     def _prepare_input_tacotron2(self, input_ids):
         return (tf.expand_dims(tf.convert_to_tensor(input_ids, dtype=tf.int32), 0),
                 tf.convert_to_tensor([len(input_ids)], tf.int32),
@@ -289,14 +288,5 @@ class TTS(object):
         audio_after_tflite = self._generator(mel_output_tflite)[0, :, 0]
         sf.write('{}.wav'.format(out_file_name), audio_after_tflite, self._sampling_rate)
 
-# COLAB FOR INFERENCE FROM TFLITE MODELS:
+# NOTE: COLAB EXAMPLE FOR INFERENCE FROM TFLITE MODELS:
 # https://colab.research.google.com/drive/1HudLLpT9CQdh2k04c06bHUwLubhGTWxA?usp=sharing
-
-
-# Additional info:
-# Input text of 777 words (4k chars including spaces) used too much memory locally,
-# chunk to ~350 chars (75 words) max for best quality
-# 777 words = 12 mb file
-# input_text = "Recent research at Harvard has shown meditating\
-# for as little as 8 weeks, can actually increase the grey matter in the \
-# parts of the brain responsible for emotional regulation, and learning."

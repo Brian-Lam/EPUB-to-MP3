@@ -55,7 +55,7 @@ $ pip3 install -r requirements.txt
 ### Offline model downloads
 **Option 1: Download pre-zipped models**
 
-Download [the zip file](https://drive.google.com/file/d/1fcc8Rdl9WemkwFoiLg4p22vilwd5h8KV/view?usp=sharing) and extract to this directory.
+Download [the zip file](https://drive.google.com/file/d/1fcc8Rdl9WemkwFoiLg4p22vilwd5h8KV/view?usp=sharing) and extract to this directory (i.e. the root of the repo).
 
 **Option 2: Download models from source**
 
@@ -79,5 +79,5 @@ $ python3 convert.py --file="book.epub"
 
 ## Offline usage
 ```sh
-$ python3 convert.py --file="book.epub" --offline
+$ python3 convert.py --file="book.epub" --local
 ```
