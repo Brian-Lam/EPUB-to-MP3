@@ -1,0 +1,59 @@
+allow_cache: true
+batch_size: 32
+config: egs/ljspeech/conf/tacotron2.v1.yaml
+dev_dir: ./egs/ljspeech/dump/valid/
+end_ratio_value: 0.0
+eval_interval_steps: 500
+format: npy
+hop_size: 256
+is_shuffle: true
+log_interval_steps: 100
+mel_length_threshold: 32
+mixed_precision: false
+num_save_intermediate_results: 1
+optimizer_params:
+  decay_steps: 150000
+  end_learning_rate: 1.0e-05
+  initial_learning_rate: 0.001
+  warmup_proportion: 0.02
+  weight_decay: 0.001
+outdir: ./egs/ljspeech/exp/tacotron2.v1
+remove_short_samples: true
+resume: ./egs/ljspeech/exp/tacotron2.v1/checkpoints/ckpt-45000
+save_interval_steps: 5000
+schedule_decay_steps: 50000
+start_ratio_value: 0.5
+start_schedule_teacher_forcing: 250000
+tacotron2_params:
+  attention_dim: 128
+  attention_filters: 32
+  attention_kernel: 31
+  attention_type: lsa
+  decoder_lstm_units: 1024
+  embedding_dropout_prob: 0.1
+  embedding_hidden_size: 512
+  encoder_conv_activation: relu
+  encoder_conv_dropout_rate: 0.5
+  encoder_conv_filters: 512
+  encoder_conv_kernel_sizes: 5
+  encoder_lstm_units: 256
+  initializer_range: 0.02
+  n_conv_encoder: 5
+  n_conv_postnet: 5
+  n_lstm_decoder: 1
+  n_mels: 80
+  n_prenet_layers: 2
+  n_speakers: 1
+  postnet_conv_filters: 512
+  postnet_conv_kernel_sizes: 5
+  postnet_dropout_rate: 0.1
+  prenet_activation: relu
+  prenet_dropout_rate: 0.5
+  prenet_units: 256
+  reduction_factor: 1
+train_dir: ./egs/ljspeech/dump/train/
+train_max_steps: 200000
+use_fixed_shapes: true
+use_norm: true
+verbose: 1
+version: 0.3.4
